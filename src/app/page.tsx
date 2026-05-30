@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import productsData from "../data/products.json";
+import { useState, useEffect } from "react";
 
 interface Product {
   id: string;
@@ -17,9 +16,28 @@ interface CartItem extends Product {
 }
 
 export default function Home() {
+  const [productsData, setProductsData] = useState<Product[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const whatsappNumber = "5511999999999"; // Placeholder
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await fetch("/api/products");
+        if (res.ok) {
+          const data = await res.json();
+          setProductsData(data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
 
   const addToCart = (product: Product) => {
     setCart((prev) => {
