@@ -1,21 +1,11 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { getSupabase } from '@/lib/supabase';
 
-// Função auxiliar para validar se o Supabase está propriamente configurado
-function isSupabaseConfigured() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  return url && !url.includes('seu-projeto') && key && !key.includes('sua-chave');
-}
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    if (!isSupabaseConfigured()) {
-      return NextResponse.json(
-        { error: 'Supabase não está configurado. Por favor, ajuste o seu arquivo .env.local com credenciais válidas.' },
-        { status: 500 }
-      );
-    }
+    const supabase = getSupabase();
 
     const { data: products, error } = await supabase
       .from('products')
@@ -23,71 +13,66 @@ export async function GET() {
       .order('created_at', { ascending: false });
 
     if (error) {
-      throw error;
+      console.error('Supabase GET error:', error);
+      return NextResponse.json([], { status: 200 });
     }
 
     return NextResponse.json(products || []);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Erro ao buscar produtos:', error);
-    return NextResponse.json({ error: 'Erro ao buscar produtos no banco de dados' }, { status: 500 });
+    return NextResponse.json([], { status: 200 });
   }
 }
 
 export async function POST(request: Request) {
   try {
-    if (!isSupabaseConfigured()) {
+    const supabase = getSupabase();
+    const body = await request.json();
+
+    const productId = body.id || `prod_${Date.now()}`;
+
+    const { data, error } = await supabase
+      .from('products')
+      .insert({
+        id: productId,
+        name: body.name,
+        description: body.description || '',
+        price: body.price,
+        image: body.image || '',
+        category: body.category || 'Geral',
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Supabase POST error:', error);
       return NextResponse.json(
-        { error: 'Supabase não está configurado. Por favor, ajuste o seu arquivo .env.local.' },
+        { error: error.message || 'Erro ao salvar produto' },
         { status: 500 }
       );
     }
 
-    const newProduct = await request.json();
-    
-    // Auto-gerar ID se não for fornecido
-    if (!newProduct.id) {
-      newProduct.id = `prod_${Date.now()}`;
-    }
-
-    const { data, error } = await supabase
-      .from('products')
-      .insert([
-        {
-          id: newProduct.id,
-          name: newProduct.name,
-          description: newProduct.description || '',
-          price: newProduct.price,
-          image: newProduct.image,
-          category: newProduct.category || 'Geral'
-        }
-      ])
-      .select();
-
-    if (error) {
-      throw error;
-    }
-
-    return NextResponse.json(data ? data[0] : newProduct, { status: 201 });
-  } catch (error: any) {
+    return NextResponse.json(data, { status: 201 });
+  } catch (error: unknown) {
     console.error('Erro ao criar produto:', error);
-    return NextResponse.json({ error: 'Erro ao salvar produto no banco de dados' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Erro interno ao salvar produto' },
+      { status: 500 }
+    );
   }
 }
 
 export async function DELETE(request: Request) {
   try {
-    if (!isSupabaseConfigured()) {
-      return NextResponse.json(
-        { error: 'Supabase não está configurado. Por favor, ajuste o seu arquivo .env.local.' },
-        { status: 500 }
-      );
-    }
+    const supabase = getSupabase();
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
 
-    const url = new URL(request.url);
-    const id = url.searchParams.get('id');
-    
     if (!id) {
-      return NextResponse.json({ error: 'O ID do produto é obrigatório' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'O ID do produto é obrigatório' },
+        { status: 400 }
+      );
     }
 
     const { error } = await supabase
@@ -96,12 +81,19 @@ export async function DELETE(request: Request) {
       .eq('id', id);
 
     if (error) {
-      throw error;
+      console.error('Supabase DELETE error:', error);
+      return NextResponse.json(
+        { error: error.message || 'Erro ao deletar produto' },
+        { status: 500 }
+      );
     }
-    
+
     return NextResponse.json({ success: true });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Erro ao deletar produto:', error);
-    return NextResponse.json({ error: 'Erro ao deletar produto no banco de dados' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Erro interno ao deletar produto' },
+      { status: 500 }
+    );
   }
 }

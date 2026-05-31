@@ -26,12 +26,15 @@ export default function Home() {
     const fetchProducts = async () => {
       try {
         const res = await fetch("/api/products");
-        if (res.ok) {
-          const data = await res.json();
+        const data = await res.json();
+        if (Array.isArray(data)) {
           setProductsData(data);
+        } else {
+          setProductsData([]);
         }
       } catch (error) {
         console.error("Failed to fetch products:", error);
+        setProductsData([]);
       } finally {
         setIsLoading(false);
       }
