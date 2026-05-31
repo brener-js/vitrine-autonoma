@@ -1,64 +1,107 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import { supabase } from '@/lib/supabase';
 
-const dataFilePath = path.join(process.cwd(), 'src', 'data', 'products.json');
+// Função auxiliar para validar se o Supabase está propriamente configurado
+function isSupabaseConfigured() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  return url && !url.includes('seu-projeto') && key && !key.includes('sua-chave');
+}
 
 export async function GET() {
   try {
-    if (!fs.existsSync(dataFilePath)) {
-      return NextResponse.json([]);
+    if (!isSupabaseConfigured()) {
+      return NextResponse.json(
+        { error: 'Supabase não está configurado. Por favor, ajuste o seu arquivo .env.local com credenciais válidas.' },
+        { status: 500 }
+      );
     }
-    const fileContents = fs.readFileSync(dataFilePath, 'utf8');
-    const products = JSON.parse(fileContents);
-    return NextResponse.json(products);
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to read products' }, { status: 500 });
+
+    const { data: products, error } = await supabase
+      .from('products')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      throw error;
+    }
+
+    return NextResponse.json(products || []);
+  } catch (error: any) {
+    console.error('Erro ao buscar produtos:', error);
+    return NextResponse.json({ error: 'Erro ao buscar produtos no banco de dados' }, { status: 500 });
   }
 }
 
 export async function POST(request: Request) {
   try {
-    const newProduct = await request.json();
-    let products = [];
-    
-    if (fs.existsSync(dataFilePath)) {
-      const fileContents = fs.readFileSync(dataFilePath, 'utf8');
-      products = JSON.parse(fileContents);
+    if (!isSupabaseConfigured()) {
+      return NextResponse.json(
+        { error: 'Supabase não está configurado. Por favor, ajuste o seu arquivo .env.local.' },
+        { status: 500 }
+      );
     }
+
+    const newProduct = await request.json();
     
-    // Auto-generate ID if not provided
+    // Auto-gerar ID se não for fornecido
     if (!newProduct.id) {
       newProduct.id = `prod_${Date.now()}`;
     }
-    
-    products.push(newProduct);
-    fs.writeFileSync(dataFilePath, JSON.stringify(products, null, 2));
-    
-    return NextResponse.json(newProduct, { status: 201 });
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to save product' }, { status: 500 });
+
+    const { data, error } = await supabase
+      .from('products')
+      .insert([
+        {
+          id: newProduct.id,
+          name: newProduct.name,
+          description: newProduct.description || '',
+          price: newProduct.price,
+          image: newProduct.image,
+          category: newProduct.category || 'Geral'
+        }
+      ])
+      .select();
+
+    if (error) {
+      throw error;
+    }
+
+    return NextResponse.json(data ? data[0] : newProduct, { status: 201 });
+  } catch (error: any) {
+    console.error('Erro ao criar produto:', error);
+    return NextResponse.json({ error: 'Erro ao salvar produto no banco de dados' }, { status: 500 });
   }
 }
 
 export async function DELETE(request: Request) {
   try {
+    if (!isSupabaseConfigured()) {
+      return NextResponse.json(
+        { error: 'Supabase não está configurado. Por favor, ajuste o seu arquivo .env.local.' },
+        { status: 500 }
+      );
+    }
+
     const url = new URL(request.url);
     const id = url.searchParams.get('id');
     
     if (!id) {
-      return NextResponse.json({ error: 'Product ID is required' }, { status: 400 });
+      return NextResponse.json({ error: 'O ID do produto é obrigatório' }, { status: 400 });
     }
-    
-    if (fs.existsSync(dataFilePath)) {
-      const fileContents = fs.readFileSync(dataFilePath, 'utf8');
-      let products = JSON.parse(fileContents);
-      products = products.filter((p: any) => p.id !== id);
-      fs.writeFileSync(dataFilePath, JSON.stringify(products, null, 2));
+
+    const { error } = await supabase
+      .from('products')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      throw error;
     }
     
     return NextResponse.json({ success: true });
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to delete product' }, { status: 500 });
+  } catch (error: any) {
+    console.error('Erro ao deletar produto:', error);
+    return NextResponse.json({ error: 'Erro ao deletar produto no banco de dados' }, { status: 500 });
   }
 }
