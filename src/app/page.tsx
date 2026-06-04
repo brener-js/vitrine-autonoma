@@ -9,7 +9,7 @@ export default function Home() {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const whatsappNumber = "5511999999999"; // Placeholder
+  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "5511999999999";
 
   useEffect(() => {
     const fetchProducts = async () => {
