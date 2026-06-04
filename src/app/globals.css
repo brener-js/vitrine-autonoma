@@ -407,3 +407,29 @@ button {
 .admin-remove-btn:hover {
   background: rgba(255, 74, 74, 0.1);
 }
+
+.container-toast {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 200;
+  animation: toastFadeIn 0.3s ease-out;
+  font-weight: bold;
+}
+
+@keyframes toastFadeIn {
+  from {
+    bottom: 1rem;
+    opacity: 0;
+  }
+  to {
+    bottom: 2rem;
+    opacity: 1;
+  }
+}

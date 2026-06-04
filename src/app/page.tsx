@@ -12,7 +12,15 @@ export default function Home() {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
   const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "5511999999999";
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => {
+      setToastMessage(null);
+    }, 2500);
+  };
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -44,6 +52,7 @@ export default function Home() {
       }
       return [...prev, { ...product, quantity: 1 }];
     });
+    showToast(`Adicionado: ${product.name} ao carrinho!`);
   };
 
   const removeFromCart = (id: string) => {
@@ -131,6 +140,12 @@ export default function Home() {
         total={total}
         handleCheckout={handleCheckout}
       />
+
+      {toastMessage && (
+        <div className="container-toast" role="status" aria-live="polite">
+          {toastMessage}
+        </div>
+      )}
     </main>
   );
 }
