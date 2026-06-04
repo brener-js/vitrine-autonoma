@@ -14,13 +14,13 @@ export async function GET() {
 
     if (error) {
       console.error('Supabase GET error:', error);
-      return NextResponse.json([], { status: 200 });
+      return NextResponse.json({ error: error.message || 'Erro ao carregar produtos' }, { status: 500 });
     }
 
     return NextResponse.json(products || []);
   } catch (error: unknown) {
     console.error('Erro ao buscar produtos:', error);
-    return NextResponse.json([], { status: 200 });
+    return NextResponse.json({ error: 'Erro interno ao buscar produtos' }, { status: 500 });
   }
 }
 
