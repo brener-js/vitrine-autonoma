@@ -3,14 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 
-interface Product {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  image: string;
-  category: string;
-}
+import { Product } from "@/types/product";
 
 export default function AdminPage() {
   const [products, setProducts] = useState<Product[]>([]);

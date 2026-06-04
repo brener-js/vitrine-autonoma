@@ -2,18 +2,7 @@
 
 import { useState, useEffect } from "react";
 
-interface Product {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  image: string;
-  category: string;
-}
-
-interface CartItem extends Product {
-  quantity: number;
-}
+import { Product, CartItem } from "@/types/product";
 
 export default function Home() {
   const [productsData, setProductsData] = useState<Product[]>([]);
