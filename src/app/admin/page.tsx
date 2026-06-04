@@ -15,8 +15,7 @@ export default function AdminPage() {
   const [image, setImage] = useState("");
   const [category, setCategory] = useState("");
 
-  const fetchProducts = async (showLoading = false) => {
-    if (showLoading) setIsLoading(true);
+  const fetchProducts = async () => {
     try {
       const res = await fetch("/api/products");
       const data = await res.json();
