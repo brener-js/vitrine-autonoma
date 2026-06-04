@@ -103,10 +103,11 @@ export default function AdminPage() {
 
       <section className="admin-form-section">
         <h2>Adicionar Novo Produto</h2>
-        <form onSubmit={handleAddProduct} className="admin-form">
+         <form onSubmit={handleAddProduct} className="admin-form">
           <div className="form-group">
-            <label>Nome do Produto *</label>
+            <label htmlFor="product-name">Nome do Produto *</label>
             <input 
+              id="product-name"
               type="text" 
               value={name} 
               onChange={(e) => setName(e.target.value)} 
@@ -115,8 +116,9 @@ export default function AdminPage() {
             />
           </div>
           <div className="form-group">
-            <label>Descrição</label>
+            <label htmlFor="product-description">Descrição</label>
             <textarea 
+              id="product-description"
               value={description} 
               onChange={(e) => setDescription(e.target.value)} 
               className="admin-input"
@@ -125,8 +127,9 @@ export default function AdminPage() {
           </div>
           <div className="form-row">
             <div className="form-group">
-              <label>Preço (R$) *</label>
+              <label htmlFor="product-price">Preço (R$) *</label>
               <input 
+                id="product-price"
                 type="number" 
                 step="0.01" 
                 value={price} 
@@ -136,8 +139,9 @@ export default function AdminPage() {
               />
             </div>
             <div className="form-group">
-              <label>Categoria</label>
+              <label htmlFor="product-category">Categoria</label>
               <input 
+                id="product-category"
                 type="text" 
                 value={category} 
                 onChange={(e) => setCategory(e.target.value)} 
@@ -146,8 +150,9 @@ export default function AdminPage() {
             </div>
           </div>
           <div className="form-group">
-            <label>URL da Imagem</label>
+            <label htmlFor="product-image">URL da Imagem</label>
             <input 
+              id="product-image"
               type="url" 
               value={image} 
               onChange={(e) => setImage(e.target.value)} 
@@ -156,7 +161,7 @@ export default function AdminPage() {
             />
           </div>
           <button type="submit" className="admin-submit-btn">Adicionar Produto</button>
-        </form>
+         </form>
       </section>
 
       <section className="admin-list-section">
@@ -176,6 +181,7 @@ export default function AdminPage() {
                 <button 
                   onClick={() => handleRemoveProduct(product.id)} 
                   className="admin-remove-btn"
+                  aria-label={`Remover produto ${product.name}`}
                 >
                   Remover
                 </button>
