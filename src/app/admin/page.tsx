@@ -15,8 +15,8 @@ export default function AdminPage() {
   const [image, setImage] = useState("");
   const [category, setCategory] = useState("");
 
-  const fetchProducts = async () => {
-    setIsLoading(true);
+  const fetchProducts = async (showLoading = false) => {
+    if (showLoading) setIsLoading(true);
     try {
       const res = await fetch("/api/products");
       const data = await res.json();
@@ -34,6 +34,7 @@ export default function AdminPage() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchProducts();
   }, []);
 

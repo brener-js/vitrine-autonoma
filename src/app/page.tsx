@@ -11,7 +11,6 @@ export default function Home() {
   const [productsData, setProductsData] = useState<Product[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "5511999999999";
 
@@ -35,8 +34,6 @@ export default function Home() {
       } catch (error) {
         console.error("Failed to fetch products:", error);
         setProductsData([]);
-      } finally {
-        setIsLoading(false);
       }
     };
     fetchProducts();
