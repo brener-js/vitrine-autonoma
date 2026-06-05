@@ -1,36 +1,50 @@
-Este é um projeto [Next.js](https://nextjs.org) inicializado com [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Vitrine Autônoma
+
+## Introdução e Alinhamento com a ODS 8
+
+O projeto Vitrine Autônoma foi desenvolvido com o propósito de fomentar o crescimento econômico inclusivo e sustentável, alinhando-se diretamente ao Objetivo de Desenvolvimento Sustentável 8 (Trabalho Decente e Crescimento Econômico) da ONU. Ao fornecer uma plataforma de e-commerce acessível, simplificada e eficiente para pequenos empreendedores, o projeto visa:
+
+- Promover a formalização e o crescimento de micro e pequenas empresas.
+- Facilitar o acesso de produtores locais ao mercado digital.
+- Garantir um ambiente de trabalho digno através da automação de processos de venda e gestão.
+
+## Sobre o Projeto
+
+A **Vitrine Autônoma** é uma aplicação minimalista, rápida e acessível projetada para pequenos empreendedores e negócios locais. Ela permite a criação de um catálogo digital de produtos de forma rápida e utiliza o WhatsApp como canal de fechamento de vendas, dispensando a necessidade de complexos gateways de pagamento e encurtando a jornada de compra do cliente.
+
+## Funcionalidades Principais
+
+- **Catálogo de Produtos:** Listagem clara, ágil e focada em performance para alta taxa de conversão.
+- **Carrinho de Compras Interativo:** Gestão do pedido simplificada que envia um resumo do pedido diretamente para o WhatsApp do lojista.
+- **Painel Administrativo Seguro (`/admin`):** Adição e remoção de produtos, garantindo uma gestão fluida com mensagens de sucesso e diagnóstico amigáveis.
+- **Performance e Acessibilidade:** Desenvolvida para atingir a pontuação máxima no Lighthouse (Core Web Vitals), com total suporte a leitores de tela e ótimo contraste.
+
+## Tecnologias Utilizadas
+
+- **[Next.js](https://nextjs.org/)** (App Router)
+- **TypeScript**
+- **CSS** (Vanilla CSS focando em alta performance na renderização)
 
 ## Primeiros Passos
 
-Primeiro, execute o servidor de desenvolvimento:
-
+1. Clone o repositório e instale as dependências:
 ```bash
-npm run dev
-# ou
-yarn dev
-# ou
-pnpm dev
-# ou
-bun dev
+npm install
 ```
 
-Abra [http://localhost:3000](http://localhost:3000) no seu navegador para ver o resultado.
+2. Execute o servidor de desenvolvimento localmente:
+```bash
+npm run dev
+```
 
-Você pode começar a editar a página modificando `app/page.tsx`. A página é atualizada automaticamente conforme você edita o arquivo.
+3. Acesse em seu navegador:
+   - **Loja (Catálogo):** [http://localhost:3000](http://localhost:3000)
+   - **Painel Administrativo:** [http://localhost:3000/admin](http://localhost:3000/admin)
 
-Este projeto usa [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) para otimizar e carregar automaticamente a [Geist](https://vercel.com/font), uma nova família de fontes da Vercel.
+## Variáveis de Ambiente
 
-## Saiba Mais
+Crie um arquivo `.env.local` na raiz do projeto, caso queira configurar o número de destino do WhatsApp:
 
-Para saber mais sobre o Next.js, dê uma olhada nos seguintes recursos:
-
-- [Documentação do Next.js](https://nextjs.org/docs) - aprenda sobre as funcionalidades e a API do Next.js.
-- [Aprenda Next.js](https://nextjs.org/learn) - um tutorial interativo de Next.js.
-
-Você pode conferir [o repositório do Next.js no GitHub](https://github.com/vercel/next.js) - seu feedback e contribuições são bem-vindos!
-
-## Deploy na Vercel
-
-A maneira mais fácil de fazer o deploy do seu aplicativo Next.js é usar a [Plataforma Vercel](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) dos criadores do Next.js.
-
-Confira nossa [documentação de deploy do Next.js](https://nextjs.org/docs/app/building-your-application/deploying) para mais detalhes.
+```env
+NEXT_PUBLIC_WHATSAPP_NUMBER=5511999999999
+```
