@@ -8,12 +8,20 @@ import { Product } from "@/types/product";
 export default function AdminPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
   
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [image, setImage] = useState("");
   const [category, setCategory] = useState("");
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => {
+      setToastMessage(null);
+    }, 3000);
+  };
 
   const fetchProducts = async () => {
     try {
@@ -23,10 +31,12 @@ export default function AdminPage() {
         setProducts(data);
       } else {
         setProducts([]);
+        showToast("Erro: formato inválido de produtos.");
       }
     } catch (error) {
       console.error("Failed to fetch products:", error);
       setProducts([]);
+      showToast("Erro de conexão ao carregar produtos.");
     } finally {
       setIsLoading(false);
     }
@@ -62,10 +72,14 @@ export default function AdminPage() {
         setPrice("");
         setImage("");
         setCategory("");
+        showToast("Produto adicionado com sucesso!");
         fetchProducts(); // Refresh list
+      } else {
+        showToast("Erro ao adicionar produto.");
       }
     } catch (error) {
       console.error("Failed to add product:", error);
+      showToast("Erro de conexão ao adicionar produto.");
     }
   };
 
@@ -78,10 +92,14 @@ export default function AdminPage() {
       });
 
       if (res.ok) {
+        showToast("Produto removido com sucesso!");
         fetchProducts(); // Refresh list
+      } else {
+        showToast("Erro ao remover produto.");
       }
     } catch (error) {
       console.error("Failed to remove product:", error);
+      showToast("Erro de conexão ao remover produto.");
     }
   };
 
@@ -183,6 +201,12 @@ export default function AdminPage() {
           </div>
         )}
       </section>
+
+      {toastMessage && (
+        <div className="container-toast" role="status" aria-live="polite">
+          {toastMessage}
+        </div>
+      )}
     </main>
   );
 }

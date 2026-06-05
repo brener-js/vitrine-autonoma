@@ -34,8 +34,8 @@ export default function CartDrawer({
   if (!isOpen) return null;
 
   return (
-    <div className="container-cart-modal" role="dialog" aria-modal="true" aria-labelledby="cart-title">
-      <div className="cart-content">
+    <div className="container-cart-modal" role="dialog" aria-modal="true" aria-labelledby="cart-title" onClick={onClose}>
+      <div className="cart-content" onClick={(e) => e.stopPropagation()}>
         <div className="cart-header">
           <h2 id="cart-title">Seu Pedido</h2>
           <button 
